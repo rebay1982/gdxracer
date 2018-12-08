@@ -11,6 +11,13 @@ import java.util.ArrayList;
 
 public class TitleScreen implements Screen
 {
+  private final static int CAR_MAX_SPEED = 7000;  // CM/sec
+  private final static int CAR_ACCEL = 40;
+  private final static int CAR_BRAKE = 50;
+
+  private final static int CAMERA_HEIGHT_FROM_GROUND = -500;
+  private final static int SCALING_FACTOR_Y = 416; // (y_res/2)/tan(angle/2) -- using 60(deg)
+
   private SpriteBatch batch;
   private ArrayList<Texture> img = new ArrayList<>();
 
@@ -38,17 +45,18 @@ public class TitleScreen implements Screen
     boolean isGivingThrottle = false;
     if (Gdx.input.isKeyPressed(Input.Keys.UP))
     {
-      carSpeed += 40;
+      carSpeed += CAR_ACCEL;
 
-      if (carSpeed > 7000)
-        carSpeed = 7000;
+      // Cap speed to car's max speed
+      if (carSpeed > CAR_MAX_SPEED)
+        carSpeed = CAR_MAX_SPEED;
 
       isGivingThrottle = true;
     }
 
     if (Gdx.input.isKeyPressed((Input.Keys.DOWN)))
     {
-      carSpeed -=60;
+      carSpeed -= CAR_BRAKE;
     }
 
     if (!isGivingThrottle)
@@ -85,11 +93,10 @@ public class TitleScreen implements Screen
     Texture road;
     for (int scrY = 0; scrY < 200 ; scrY++)
     {
-      // 416 = scaling for a y_fov of 60 degrees
-      int z = -(500 * 416) / (scrY - 240) ;
+      int z = (CAMERA_HEIGHT_FROM_GROUND * SCALING_FACTOR_Y) / (scrY - 240) ;
       z += carPos;
 
-      // 250cm is the "rumble width" -- each "small" section of road.
+      // 250cm is the "rumble length" -- each "small" section of road.
       int roadIndex = (z / 250) % 2;
 
       road = img.get(roadIndex);
