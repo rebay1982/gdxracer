@@ -48,7 +48,7 @@ public class TitleScreen implements Screen
 
     if (Gdx.input.isKeyPressed((Input.Keys.DOWN)))
     {
-      carSpeed -=50;
+      carSpeed -=60;
     }
 
     if (!isGivingThrottle)
