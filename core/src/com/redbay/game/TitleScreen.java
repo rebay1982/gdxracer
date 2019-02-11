@@ -8,12 +8,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TitleScreen implements Screen
 {
-  private final static int CAR_MAX_SPEED = 7000;  // CM/sec
+  private final static int CAR_MAX_SPEED = 8800;  // CM/sec
   private final static int CAR_ACCEL = 40;
-  private final static int CAR_BRAKE = 50;
+  private final static int CAR_BRAKE = 40;
 
   private final static int CAMERA_HEIGHT_FROM_GROUND = -500;
   private final static int SCALING_FACTOR_Y = 416; // (y_res/2)/tan(angle/2) -- using 60(deg)
@@ -21,8 +22,10 @@ public class TitleScreen implements Screen
   private SpriteBatch batch;
   private ArrayList<Texture> img = new ArrayList<>();
 
-  private int carSpeed = 0;
+  private int carSpeed = 4400;
   private int carPos = 0;
+
+  List<TrackSegment> track = new ArrayList<>();
 
   public TitleScreen()
   {
@@ -31,6 +34,9 @@ public class TitleScreen implements Screen
 
     img.add(new Texture("Road.png"));
     img.add(new Texture("RoadDark.png"));
+
+    // Initialize new track
+    track.add(new TrackSegment(1000, 0));
   }
 
   @Override
@@ -59,8 +65,8 @@ public class TitleScreen implements Screen
       carSpeed -= CAR_BRAKE;
     }
 
-    if (!isGivingThrottle)
-      carSpeed -= 10;
+//    if (!isGivingThrottle)
+//      carSpeed -= 10;
 
     if (carSpeed < 0)
       carSpeed = 0;
@@ -72,24 +78,6 @@ public class TitleScreen implements Screen
 
     batch.begin();
 
-
-    // So, since LibGDX seems to have piss poor documentation:
-    // img
-    // pos x (lower left) to start drawing texture
-    // pos y (lower left) to start drawing texture
-    // pos x where scaling and rotation effects start
-    // pos y where scaling and roration effects start
-    // width of region, in screen land, where texture will be rendered (this will stretch texture)
-    // height of region, in screen land, where texture will be rendered (this will stretch texture)
-    // scale x
-    // scale y
-    // rotation angle
-    // src x (in texture land)
-    // src y (in texture land)
-    // width (in texture land)
-    // height (in texture land)
-    // flip on x axis
-    // flip on y axis
     Texture road;
     for (int scrY = 0; scrY < 200 ; scrY++)
     {
@@ -109,6 +97,7 @@ public class TitleScreen implements Screen
           road.getWidth(),
           1);
     }
+
     batch.end();
   }
 
