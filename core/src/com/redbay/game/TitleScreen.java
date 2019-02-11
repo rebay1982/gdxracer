@@ -81,8 +81,7 @@ public class TitleScreen implements Screen
     Texture road;
     for (int scrY = 0; scrY < 200 ; scrY++)
     {
-      int z = (CAMERA_HEIGHT_FROM_GROUND * SCALING_FACTOR_Y) / (scrY - 240) ;
-      z += carPos;
+      int z = carPos + (CAMERA_HEIGHT_FROM_GROUND * SCALING_FACTOR_Y) / (scrY - 240);
 
       // 250cm is the "rumble length" -- each "small" section of road.
       int roadIndex = (z / 250) % 2;
@@ -100,6 +99,28 @@ public class TitleScreen implements Screen
 
     batch.end();
   }
+
+  private int findTrackSegmentFromOffset(final int offset)
+  {
+    int accumulatedTrackLength = 0;
+
+    for (int i = 0; i < track.size(); ++i)
+    {
+      int segmentLength = track.get(i).getLength();
+
+      if (offset > (accumulatedTrackLength + segmentLength))
+      {
+        accumulatedTrackLength += segmentLength;
+      }
+      else
+      {
+        return i;
+      }
+    }
+
+    // TODO: Missing case where offset > track length.  Need to loop around and repeat.
+  }
+
 
   @Override
   public void resize(int width, int height)

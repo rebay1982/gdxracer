@@ -23,4 +23,23 @@ public class TrackSegment
     this.length = length * 100;
     this.curvature = curvature;
   }
+
+  /**
+   * Get the segment's length
+   * @return The segment's length, in centimeters.
+   */
+  public int getLength()
+  {
+    return length;
+  }
+
+
+  /**
+   * Get the segment's curvature.
+   * @return The segment's curvature.
+   */
+  public int getCurvature()
+  {
+    return curvature;
+  }
 }
