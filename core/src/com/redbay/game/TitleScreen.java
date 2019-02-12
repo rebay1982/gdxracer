@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class TitleScreen implements Screen
 {
@@ -25,7 +24,7 @@ public class TitleScreen implements Screen
   private int carSpeed = 4400;
   private int carPos = 0;
 
-  List<TrackSegment> track = new ArrayList<>();
+  Track track = new Track();
 
   public TitleScreen()
   {
@@ -36,7 +35,8 @@ public class TitleScreen implements Screen
     img.add(new Texture("RoadDark.png"));
 
     // Initialize new track
-    track.add(new TrackSegment(1000, 0));
+    track.addSegment(new TrackSegment(500, 0));
+    track.addSegment(new TrackSegment(500, 0));
   }
 
   @Override
@@ -99,28 +99,6 @@ public class TitleScreen implements Screen
 
     batch.end();
   }
-
-  private int findTrackSegmentFromOffset(final int offset)
-  {
-    int accumulatedTrackLength = 0;
-
-    for (int i = 0; i < track.size(); ++i)
-    {
-      int segmentLength = track.get(i).getLength();
-
-      if (offset > (accumulatedTrackLength + segmentLength))
-      {
-        accumulatedTrackLength += segmentLength;
-      }
-      else
-      {
-        return i;
-      }
-    }
-
-    // TODO: Missing case where offset > track length.  Need to loop around and repeat.
-  }
-
 
   @Override
   public void resize(int width, int height)

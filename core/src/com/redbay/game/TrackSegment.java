@@ -2,8 +2,6 @@ package com.redbay.game;
 
 /**
  * This class represents the data for a track segment.
- *
- * This describes the segment's
  */
 public class TrackSegment
 {
