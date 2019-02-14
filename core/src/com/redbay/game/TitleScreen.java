@@ -11,6 +11,11 @@ import java.util.ArrayList;
 
 public class TitleScreen implements Screen
 {
+  private final static int SCREEN_SIZE_X = 640;
+  private final static int SCREEN_SIZE_Y = 480;
+  private final static int SCREEN_HALF_SIZE_X = 320;
+  private final static int SCREEN_HALF_SIZE_Y = 240;
+
   private final static int CAR_MAX_SPEED = 8800;  // CM/sec
   private final static int CAR_ACCEL = 40;
   private final static int CAR_BRAKE = 40;
@@ -24,6 +29,8 @@ public class TitleScreen implements Screen
   private int carSpeed = 4400;
   private int carPos = 0;
 
+  private int hOffset = 0;
+
   Track track = new Track();
 
   public TitleScreen()
@@ -31,8 +38,8 @@ public class TitleScreen implements Screen
     // Initialize some shiz
     batch = new SpriteBatch();
 
-    img.add(new Texture("Road.png"));
-    img.add(new Texture("RoadDark.png"));
+    img.add(new Texture("RoadWide.png"));
+    img.add(new Texture("RoadWideDark.png"));
 
     // Initialize new track
     track.addSegment(new TrackSegment(500, 0));
@@ -65,6 +72,17 @@ public class TitleScreen implements Screen
       carSpeed -= CAR_BRAKE;
     }
 
+    if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
+    {
+      hOffset -= 5;
+    }
+
+    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+    {
+      hOffset += 5;
+    }
+
+
 //    if (!isGivingThrottle)
 //      carSpeed -= 10;
 
@@ -81,19 +99,21 @@ public class TitleScreen implements Screen
     Texture road;
     for (int scrY = 0; scrY < 200 ; scrY++)
     {
-      int z = carPos + (CAMERA_HEIGHT_FROM_GROUND * SCALING_FACTOR_Y) / (scrY - 240);
+      int z = carPos + (CAMERA_HEIGHT_FROM_GROUND * SCALING_FACTOR_Y) / (scrY - SCREEN_HALF_SIZE_Y);
 
       // 250cm is the "rumble length" -- each "small" section of road.
       int roadIndex = (z / 250) % 2;
+
+      track.getTrackCurvature(z % track.getTrackLength());
 
       road = img.get(roadIndex);
       batch.draw(
           road,
           0,
           scrY,
-          0,
-          road.getHeight() - 1 - scrY,
-          road.getWidth(),
+          road.getWidth() / 2 - SCREEN_HALF_SIZE_X,  // Center of the image, minus 320 (half the screen width)
+          road.getHeight() - scrY  - 1,  // -1, 0 based index.
+          SCREEN_SIZE_X,
           1);
     }
 
