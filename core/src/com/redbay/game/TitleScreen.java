@@ -21,7 +21,7 @@ public class TitleScreen implements Screen
   private final static int CAR_BRAKE = 40;
 
   private final static int CAMERA_HEIGHT_FROM_GROUND = -500;
-  private final static int SCALING_FACTOR_Y = 416; // (y_res/2)/tan(angle/2) -- using 60(deg)
+  private final static int SCALING_FACTOR_Y = 416;    // (y_res/2)/tan(angle/2) -- using 60(deg)
 
   private SpriteBatch batch;
   private ArrayList<Texture> img = new ArrayList<>();
@@ -29,7 +29,7 @@ public class TitleScreen implements Screen
   private int carSpeed = 4400;
   private int carPos = 0;
 
-  private int hOffset = 0;
+  private int xOffset = 0;
 
   Track track = new Track();
 
@@ -74,17 +74,17 @@ public class TitleScreen implements Screen
 
     if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
     {
-      hOffset -= 5;
+      xOffset -= 20;
     }
 
     if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
     {
-      hOffset += 5;
+      xOffset += 20;
     }
 
 
-//    if (!isGivingThrottle)
-//      carSpeed -= 10;
+    if (!isGivingThrottle)
+      carSpeed -= 10;
 
     if (carSpeed < 0)
       carSpeed = 0;
@@ -107,11 +107,17 @@ public class TitleScreen implements Screen
       track.getTrackCurvature(z % track.getTrackLength());
 
       road = img.get(roadIndex);
+
+      // TODO: Clean this up a bit.
+      // This ratio is multiplied by 1000, to avoid having to store it in floats.  It is then
+      // divided by 1000 when it is multiplied by
+      // the xOffset.
+      int lineOffsetRatio = (scrY * -4 + 1000);
       batch.draw(
           road,
           0,
           scrY,
-          road.getWidth() / 2 - SCREEN_HALF_SIZE_X,  // Center of the image, minus 320 (half the screen width)
+          (road.getWidth() >> 1) - SCREEN_HALF_SIZE_X + (xOffset * lineOffsetRatio) / 1000,  // Center of the image, minus 320 (half the screen width)
           road.getHeight() - scrY  - 1,  // -1, 0 based index.
           SCREEN_SIZE_X,
           1);
