@@ -43,8 +43,8 @@ public class TitleScreen implements Screen
 
     // Initialize new track
     track.addSegment(new TrackSegment(500, 0));
-    track.addSegment(new TrackSegment(100, 5));
-    track.addSegment(new TrackSegment(300, -5));
+    track.addSegment(new TrackSegment(100, 25));
+    track.addSegment(new TrackSegment(300, -25));
   }
 
   @Override
@@ -109,36 +109,35 @@ public class TitleScreen implements Screen
       int z = carPos + (CAMERA_HEIGHT_FROM_GROUND * SCALING_FACTOR_Y) / (scrY - SCREEN_HALF_SIZE_Y);
 
       // Determine correct road texture.
+      // 250cm is the "rumble length" -- each "small" section of road.
       int roadIndex = (z / 250) % 2;
       road = img.get(roadIndex);
 
-      int scrX = (road.getWidth() >> 1) - SCREEN_HALF_SIZE_X; // start off centered.
+      int roadX = (road.getWidth() >> 1) - SCREEN_HALF_SIZE_X; // start off centered -- Center of the image, minus 320 (half the screen width)
+      int roadY = road.getHeight() - scrY  - 1;   // -1, 0 based index.
 
       // Perspective adjustments.
-
       // TODO: Clean this up a bit.
       // This ratio is multiplied by 1000, to avoid having to store it in floats.  It is then
       // divided by 1000 when it is multiplied by
       // the xOffset.
       int lineOffsetRatio = (scrY * -4 + 1000);
-      scrX += ((xOffset * lineOffsetRatio) / 1000);
-
+      int horizontalOffset = ((xOffset * lineOffsetRatio) / 1000);
 
       // Curvature adjustments.
-      // 250cm is the "rumble length" -- each "small" section of road.
       dCurve = track.getTrackCurvature(z % track.getTrackLength());
       ddCurve += dCurve;
       accumulatedCurve += ddCurve;
 
-      scrX += accumulatedCurve / 1000;
+      int curvatureOffset = accumulatedCurve / 1000;
 
       // Draw the line.
       batch.draw(
           road,
           0,
           scrY,
-          scrX,  // Center of the image, minus 320 (half the screen width)
-          road.getHeight() - scrY  - 1,  // -1, 0 based index.
+          roadX + horizontalOffset + curvatureOffset,
+          roadY,
           SCREEN_SIZE_X,
           1);
     }
