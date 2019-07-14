@@ -102,29 +102,42 @@ public class TitleScreen implements Screen
     int dCurve = 0;
     int ddCurve = 0;
     Texture road;
+
     for (int scrY = 0; scrY < 200 ; scrY++)
     {
+      // Determine Z position
       int z = carPos + (CAMERA_HEIGHT_FROM_GROUND * SCALING_FACTOR_Y) / (scrY - SCREEN_HALF_SIZE_Y);
 
-      // 250cm is the "rumble length" -- each "small" section of road.
+      // Determine correct road texture.
       int roadIndex = (z / 250) % 2;
-
-      dCurve = track.getTrackCurvature(z % track.getTrackLength());
-      ddCurve += dCurve;
-
       road = img.get(roadIndex);
 
-      accumulatedCurve += ddCurve;
+      int scrX = (road.getWidth() >> 1) - SCREEN_HALF_SIZE_X; // start off centered.
+
+      // Perspective adjustments.
+
       // TODO: Clean this up a bit.
       // This ratio is multiplied by 1000, to avoid having to store it in floats.  It is then
       // divided by 1000 when it is multiplied by
       // the xOffset.
       int lineOffsetRatio = (scrY * -4 + 1000);
+      scrX += ((xOffset * lineOffsetRatio) / 1000);
+
+
+      // Curvature adjustments.
+      // 250cm is the "rumble length" -- each "small" section of road.
+      dCurve = track.getTrackCurvature(z % track.getTrackLength());
+      ddCurve += dCurve;
+      accumulatedCurve += ddCurve;
+
+      scrX += accumulatedCurve / 1000;
+
+      // Draw the line.
       batch.draw(
           road,
           0,
           scrY,
-          (road.getWidth() >> 1) - SCREEN_HALF_SIZE_X + ((xOffset * lineOffsetRatio) / 1000) + accumulatedCurve / 1000,  // Center of the image, minus 320 (half the screen width)
+          scrX,  // Center of the image, minus 320 (half the screen width)
           road.getHeight() - scrY  - 1,  // -1, 0 based index.
           SCREEN_SIZE_X,
           1);
