@@ -113,14 +113,18 @@ public class TitleScreen implements Screen
       int roadIndex = (z / 250) % 2;
       road = img.get(roadIndex);
 
-      int roadX = (road.getWidth() >> 1) - SCREEN_HALF_SIZE_X; // start off centered -- Center of the image, minus 320 (half the screen width)
+      // Center of the image, minus 320 (half the screen width)
+      int roadX = (road.getWidth() >> 1) - SCREEN_HALF_SIZE_X; // start off centered
       int roadY = road.getHeight() - scrY  - 1;   // -1, 0 based index.
 
       // Perspective adjustments.
-      // TODO: Clean this up a bit.
       // This ratio is multiplied by 1000, to avoid having to store it in floats.  It is then
-      // divided by 1000 when it is multiplied by
-      // the xOffset.
+      //   lineOffsetRatio is linear: y = a*x + b.
+      //   Solving for y = 1. x = 0: b = 1.
+      //   Solving for y = 0, x = 240: a = -1/240.
+      //   Multiply everything by 1000 to scale and avoid floating points.
+      //   (lineOffsetRation = (-1/240*scrY + 1) * 1000
+      //   We approximate -1/240*1000 by -4.  Exact value is around -4.167.
       int lineOffsetRatio = (scrY * -4 + 1000);
       int horizontalOffset = ((xOffset * lineOffsetRatio) / 1000);
 
