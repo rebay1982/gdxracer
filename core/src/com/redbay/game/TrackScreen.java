@@ -11,8 +11,10 @@ import com.redbay.game.model.TrackSegment;
 
 import java.util.ArrayList;
 
-public class TitleScreen implements Screen
+public class TrackScreen implements Screen
 {
+  private final DebugConsole debugConsole;
+
   private final static int SCREEN_SIZE_X = 640;
   private final static int SCREEN_SIZE_Y = 480;
   private final static int SCREEN_HALF_SIZE_X = 320;
@@ -25,8 +27,8 @@ public class TitleScreen implements Screen
   private final static int CAMERA_HEIGHT_FROM_GROUND = -500;
   private final static int SCALING_FACTOR_Y = 416;    // (y_res/2)/tan(angle/2) -- using 60(deg)
 
-  private SpriteBatch batch;
-  private ArrayList<Texture> img = new ArrayList<>();
+  private final SpriteBatch batch;
+  private final ArrayList<Texture> img = new ArrayList<>();
 
   private int carSpeed = 4400;
   private int carPos = 0;
@@ -35,7 +37,7 @@ public class TitleScreen implements Screen
 
   Track track = new Track();
 
-  public TitleScreen()
+  public TrackScreen()
   {
     // Initialize some shiz
     batch = new SpriteBatch();
@@ -47,6 +49,8 @@ public class TitleScreen implements Screen
     track.addSegment(new TrackSegment(500, 0));
     track.addSegment(new TrackSegment(100, 15));
     track.addSegment(new TrackSegment(300, -15));
+
+    debugConsole = new DebugConsole();
   }
 
   @Override
@@ -58,6 +62,11 @@ public class TitleScreen implements Screen
   @Override
   public void render(float delta)
   {
+    if (Gdx.input.isKeyJustPressed(Input.Keys.D))
+    {
+      debugConsole.enableConsole(!debugConsole.isConsoleEnabled());
+    }
+
     boolean isGivingThrottle = false;
 
     // Give throttle.
@@ -81,12 +90,12 @@ public class TitleScreen implements Screen
     // Steer the car.
     if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
     {
-      xOffset -= 100;
+      xOffset -= 50;
     }
 
     if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
     {
-      xOffset += 100;
+      xOffset += 50;
     }
 
     // Adjust car speed on input.
@@ -154,6 +163,7 @@ public class TitleScreen implements Screen
           1);
     }
 
+    debugConsole.render(batch);
     batch.end();
   }
 
