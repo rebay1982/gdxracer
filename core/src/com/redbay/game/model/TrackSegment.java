@@ -1,4 +1,4 @@
-package com.redbay.game;
+package com.redbay.game.model;
 
 /**
  * This class represents the data for a track segment.

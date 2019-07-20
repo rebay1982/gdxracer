@@ -6,6 +6,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.redbay.game.model.Track;
+import com.redbay.game.model.TrackSegment;
 
 import java.util.ArrayList;
 
@@ -57,6 +59,8 @@ public class TitleScreen implements Screen
   public void render(float delta)
   {
     boolean isGivingThrottle = false;
+
+    // Give throttle.
     if (Gdx.input.isKeyPressed(Input.Keys.UP))
     {
       carSpeed += CAR_ACCEL;
@@ -68,11 +72,13 @@ public class TitleScreen implements Screen
       isGivingThrottle = true;
     }
 
+    // Give brakes.
     if (Gdx.input.isKeyPressed((Input.Keys.DOWN)))
     {
       carSpeed -= CAR_BRAKE;
     }
 
+    // Steer the car.
     if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
     {
       xOffset -= 20;
@@ -83,28 +89,31 @@ public class TitleScreen implements Screen
       xOffset += 20;
     }
 
-
+    // Adjust car speed on input.
     if (!isGivingThrottle)
       carSpeed -= 10;
 
     if (carSpeed < 0)
       carSpeed = 0;
 
+    // Pointer to which road texture we're going to be using.
+    Texture road;
+
+    // Initialize curving state.
+    int accumulatedCurve = 0;
+    int ddCurve = 0;
+
+    // Determine car position.
     carPos += (int)(delta * carSpeed);
 
+    // Begin redering frame.
     Gdx.gl.glClearColor(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
     batch.begin();
-
-
-    int accumulatedCurve = 0;
-    int dCurve = 0;
-    int ddCurve = 0;
-    Texture road;
 
     for (int scrY = 0; scrY < 200 ; scrY++)
     {
+      // TODO: This is fixed, replace with an array to avoid calculations.
       // Determine Z position
       int z = carPos + (CAMERA_HEIGHT_FROM_GROUND * SCALING_FACTOR_Y) / (scrY - SCREEN_HALF_SIZE_Y);
 
@@ -129,8 +138,7 @@ public class TitleScreen implements Screen
       int horizontalOffset = ((xOffset * lineOffsetRatio) / 1000);
 
       // Curvature adjustments.
-      dCurve = track.getTrackCurvature(z % track.getTrackLength());
-      ddCurve += dCurve;
+      ddCurve += track.getTrackCurvature(z % track.getTrackLength());;
       accumulatedCurve += ddCurve;
 
       int curvatureOffset = accumulatedCurve / 1000;

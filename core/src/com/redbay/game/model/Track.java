@@ -1,4 +1,4 @@
-package com.redbay.game;
+package com.redbay.game.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
