@@ -45,8 +45,8 @@ public class TitleScreen implements Screen
 
     // Initialize new track
     track.addSegment(new TrackSegment(500, 0));
-    track.addSegment(new TrackSegment(100, 25));
-    track.addSegment(new TrackSegment(300, -25));
+    track.addSegment(new TrackSegment(100, 15));
+    track.addSegment(new TrackSegment(300, -15));
   }
 
   @Override
@@ -81,12 +81,12 @@ public class TitleScreen implements Screen
     // Steer the car.
     if (Gdx.input.isKeyPressed(Input.Keys.LEFT))
     {
-      xOffset -= 20;
+      xOffset -= 100;
     }
 
     if (Gdx.input.isKeyPressed(Input.Keys.RIGHT))
     {
-      xOffset += 20;
+      xOffset += 100;
     }
 
     // Adjust car speed on input.
@@ -130,11 +130,11 @@ public class TitleScreen implements Screen
       // This ratio is multiplied by 1000, to avoid having to store it in floats.  It is then
       //   lineOffsetRatio is linear: y = a*x + b.
       //   Solving for y = 1. x = 0: b = 1.
-      //   Solving for y = 0, x = 240: a = -1/240.
+      //   Solving for y = 0, x = 200: a = -1/200.
       //   Multiply everything by 1000 to scale and avoid floating points.
-      //   (lineOffsetRation = (-1/240*scrY + 1) * 1000
-      //   We approximate -1/240*1000 by -4.  Exact value is around -4.167.
-      int lineOffsetRatio = (scrY * -4 + 1000);
+      //   (lineOffsetRation = (-1/200*scrY + 1) * 1000
+      //   We approximate -1/200*1000 by -5.
+      int lineOffsetRatio = (scrY * -5 + 1000);
       int horizontalOffset = ((xOffset * lineOffsetRatio) / 1000);
 
       // Curvature adjustments.
