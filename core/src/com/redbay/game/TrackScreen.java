@@ -37,6 +37,12 @@ public class TrackScreen implements Screen
 
   Track track = new Track();
 
+
+  // Background state:
+  private int backgroundScrollPosition = 0;
+  private final Texture background;
+
+
   public TrackScreen()
   {
     // Initialize some shiz
@@ -45,11 +51,15 @@ public class TrackScreen implements Screen
     img.add(new Texture("RoadWide.png"));
     img.add(new Texture("RoadWideDark.png"));
 
+    background = new Texture("BG_Clouds.png");
+
     // Initialize new track
     track.addSegment(new TrackSegment(500, 0));
-    track.addSegment(new TrackSegment(100, 15));
-    track.addSegment(new TrackSegment(300, -15));
-
+    track.addSegment(new TrackSegment(300, 15));
+    track.addSegment(new TrackSegment(300, 0));
+    track.addSegment(new TrackSegment(100, -5));
+    track.addSegment(new TrackSegment(300, -20));
+    track.addSegment(new TrackSegment(100, -5));
     debugConsole = new DebugConsole();
   }
 
@@ -147,7 +157,7 @@ public class TrackScreen implements Screen
       int horizontalOffset = ((xOffset * lineOffsetRatio) / 1000);
 
       // Curvature adjustments.
-      ddCurve += track.getTrackCurvature(z % track.getTrackLength());;
+      ddCurve += track.getTrackCurvature(z % track.getTrackLength());
       accumulatedCurve += ddCurve;
 
       int curvatureOffset = accumulatedCurve / 1000;
@@ -162,6 +172,12 @@ public class TrackScreen implements Screen
           SCREEN_SIZE_X,
           1);
     }
+
+    // Render background
+    // The scroll offset should be a factor of the car's speed -- or else, if stopping in a curved
+    //   section of the road, the background will keep scrolling even if the car is stopped.
+    int bgScrollOffset = track.getTrackCurvature(carPos % track.getTrackLength()) * carSpeed;
+    renderBackground( bgScrollOffset / 1000); // Bring it down to scale.
 
     debugConsole.render(batch);
     batch.end();
@@ -197,5 +213,45 @@ public class TrackScreen implements Screen
     batch.dispose();
 
     img.forEach(Texture::dispose);
+  }
+
+
+  private void renderBackground(int scrollOffset)
+  {
+    int bgWidth = background.getWidth();
+    backgroundScrollPosition -= scrollOffset;
+
+    // Make sure background scroll position is within background boundaries
+    if (backgroundScrollPosition < 0)
+    {
+      backgroundScrollPosition += bgWidth;
+    }
+    else if (backgroundScrollPosition > bgWidth)
+    {
+      backgroundScrollPosition -= bgWidth;
+    }
+
+    int delta = backgroundScrollPosition + SCREEN_SIZE_X - bgWidth;
+
+    if (delta < 0)
+      delta = 0;
+
+    batch.draw(
+        background,
+        0,
+        200,
+        backgroundScrollPosition,
+        0,
+        SCREEN_SIZE_X - delta,
+        280);
+
+    batch.draw(
+        background,
+        SCREEN_SIZE_X - delta,
+        200,
+        0,
+        0,
+        delta,
+        280);
   }
 }
