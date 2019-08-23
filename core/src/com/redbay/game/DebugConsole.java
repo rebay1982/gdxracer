@@ -33,6 +33,7 @@ public class DebugConsole
 
       // Clear the string builder after the message was rendered to screen.
       debugMessage.setLength(0);
+
     }
   }
 

@@ -10,6 +10,7 @@ import com.redbay.game.model.Track;
 import com.redbay.game.model.TrackSegment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TrackScreen implements Screen
 {
@@ -24,11 +25,11 @@ public class TrackScreen implements Screen
   private final static int CAR_ACCEL = 40;
   private final static int CAR_BRAKE = 40;
 
-  private final static int CAMERA_HEIGHT_FROM_GROUND = -500;
+  private final static int CAMERA_HEIGHT_FROM_GROUND = -5;
   private final static int SCALING_FACTOR_Y = 416;    // (y_res/2)/tan(angle/2) -- using 60(deg)
 
   private final SpriteBatch batch;
-  private final ArrayList<Texture> img = new ArrayList<>();
+  private final List<Texture> img = new ArrayList<>();
 
   private int carSpeed = 4400;
   private int carPos = 0;
@@ -42,6 +43,8 @@ public class TrackScreen implements Screen
   private int backgroundScrollPosition = 0;
   private final Texture background;
 
+
+  int[] zmap = new int[200];
 
   public TrackScreen()
   {
@@ -60,7 +63,13 @@ public class TrackScreen implements Screen
     track.addSegment(new TrackSegment(100, -5));
     track.addSegment(new TrackSegment(300, -20));
     track.addSegment(new TrackSegment(100, -5));
+
     debugConsole = new DebugConsole();
+
+    for (int y = 0; y < 200; y++);
+    {
+
+    }
   }
 
   @Override
@@ -135,6 +144,8 @@ public class TrackScreen implements Screen
       // TODO: This is fixed, replace with an array to avoid calculations.
       // Determine Z position
       int z = carPos + (CAMERA_HEIGHT_FROM_GROUND * SCALING_FACTOR_Y) / (scrY - SCREEN_HALF_SIZE_Y);
+
+      debugConsole.debug("Z: " + (z - carPos));
 
       // Determine correct road texture.
       // 250cm is the "rumble length" -- each "small" section of road.
